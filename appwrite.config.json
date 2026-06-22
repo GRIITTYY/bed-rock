@@ -1,0 +1,663 @@
+{
+    "organizationId": "6851ab489a07a17c41c6",
+    "projectId": "bedrock",
+    "projectName": "BEDROCK",
+    "endpoint": "https://fra.cloud.appwrite.io/v1",
+    "settings": {
+        "services": {
+            "account": true,
+            "avatars": true,
+            "databases": true,
+            "locale": true,
+            "health": true,
+            "storage": true,
+            "teams": true,
+            "users": true,
+            "sites": true,
+            "functions": true,
+            "graphql": true,
+            "messaging": true
+        },
+        "protocols": {
+            "rest": true,
+            "graphql": true,
+            "websocket": true
+        },
+        "auth": {
+            "methods": {
+                "jwt": true,
+                "phone": true,
+                "invites": true,
+                "anonymous": true,
+                "email-otp": true,
+                "magic-url": true,
+                "email-password": true
+            },
+            "security": {
+                "duration": 31536000,
+                "limit": 0,
+                "sessionsLimit": 0,
+                "passwordHistory": 0,
+                "passwordDictionary": false,
+                "personalDataCheck": false,
+                "sessionAlerts": false,
+                "mockNumbers": []
+            }
+        }
+    },
+    "tablesDB": [
+        {
+            "$id": "bedrock-db",
+            "name": "BedRockDB",
+            "enabled": true
+        }
+    ],
+    "tables": [
+        {
+            "$id": "padmin",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")",
+                "update(\"any\")",
+                "delete(\"any\")",
+                "create(\"users\")",
+                "read(\"users\")",
+                "update(\"users\")",
+                "delete(\"users\")"
+            ],
+            "databaseId": "bedrock-db",
+            "name": "PAdmin",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "Name",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Email",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "email"
+                },
+                {
+                    "key": "PhoneNumber",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Password",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "AccountNumber",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "BankName",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "AccountName",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Buildings",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "building",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "PAdmin",
+                    "onDelete": "setNull",
+                    "side": "child"
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "building",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"users\")",
+                "read(\"users\")",
+                "update(\"users\")",
+                "delete(\"users\")"
+            ],
+            "databaseId": "bedrock-db",
+            "name": "Building",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "Name",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Address",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Type",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "Hostel",
+                        "Hotel",
+                        "Hall",
+                        "Apartment"
+                    ]
+                },
+                {
+                    "key": "PAdmin",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "padmin",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Buildings",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                },
+                {
+                    "key": "Rooms",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "room",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Building",
+                    "onDelete": "setNull",
+                    "side": "child"
+                },
+                {
+                    "key": "LeasingPeriod",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "daily",
+                        "monthly",
+                        "yearly"
+                    ]
+                },
+                {
+                    "key": "Pictures",
+                    "type": "string",
+                    "required": false,
+                    "array": true,
+                    "default": null,
+                    "format": "url"
+                },
+                {
+                    "key": "Details",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Price",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "MaxOccupants",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "BuildingBookings",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "booking",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Building",
+                    "onDelete": "setNull",
+                    "side": "child"
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "room",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")",
+                "update(\"any\")",
+                "delete(\"any\")"
+            ],
+            "databaseId": "bedrock-db",
+            "name": "Room",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "RoomName",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Status",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "NbrBeds",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": 0,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "NbrToilets",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": 0,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "NbrBedrooms",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": 0,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "NbrBathrooms",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": 0,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "MaxOccupants",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": 0,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "RoomPrice",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": 0,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "Building",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "building",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Rooms",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                },
+                {
+                    "key": "Details",
+                    "type": "mediumtext",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Bookings",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "booking",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Room",
+                    "onDelete": "setNull",
+                    "side": "child"
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "buyer",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")",
+                "update(\"any\")",
+                "delete(\"any\")"
+            ],
+            "databaseId": "bedrock-db",
+            "name": "Buyer",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "Name",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "PhoneNumber",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Password",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Bookings",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "booking",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Buyer",
+                    "onDelete": "setNull",
+                    "side": "child"
+                },
+                {
+                    "key": "Email",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "email"
+                },
+                {
+                    "key": "CardInfo",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "cardinfo",
+                    "relationType": "oneToMany",
+                    "twoWay": true,
+                    "twoWayKey": "Buyer",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "cardinfo",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")",
+                "update(\"any\")",
+                "delete(\"any\")"
+            ],
+            "databaseId": "bedrock-db",
+            "name": "CardInfo",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "CardNbr",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "ExpDate",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "CVV",
+                    "type": "varchar",
+                    "required": false,
+                    "array": false,
+                    "size": 3,
+                    "default": "",
+                    "encrypt": false
+                },
+                {
+                    "key": "Buyer",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "buyer",
+                    "relationType": "oneToMany",
+                    "twoWay": true,
+                    "twoWayKey": "CardInfo",
+                    "onDelete": "setNull",
+                    "side": "child"
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "booking",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"users\")",
+                "update(\"users\")",
+                "delete(\"users\")"
+            ],
+            "databaseId": "bedrock-db",
+            "name": "Booking",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "StartDate",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "EndDate",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "Buyer",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "buyer",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Bookings",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                },
+                {
+                    "key": "Room",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "room",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Bookings",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                },
+                {
+                    "key": "Review",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "review",
+                    "relationType": "oneToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Booking",
+                    "onDelete": "setNull",
+                    "side": "child"
+                },
+                {
+                    "key": "Building",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "building",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "BuildingBookings",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "review",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")",
+                "update(\"any\")",
+                "delete(\"any\")"
+            ],
+            "databaseId": "bedrock-db",
+            "name": "Review",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "Rating",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": 0,
+                    "max": 5
+                },
+                {
+                    "key": "Comment",
+                    "type": "mediumtext",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "Booking",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "booking",
+                    "relationType": "oneToOne",
+                    "twoWay": true,
+                    "twoWayKey": "Review",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                }
+            ],
+            "indexes": []
+        }
+    ],
+    "buckets": [
+        {
+            "$id": "pictures",
+            "$permissions": [
+                "create(\"users\")",
+                "read(\"users\")",
+                "update(\"users\")",
+                "delete(\"users\")",
+                "read(\"any\")"
+            ],
+            "fileSecurity": false,
+            "name": "pictures",
+            "enabled": true,
+            "maximumFileSize": 5000000000,
+            "allowedFileExtensions": [],
+            "compression": "none",
+            "encryption": true,
+            "antivirus": true
+        }
+    ]
+}

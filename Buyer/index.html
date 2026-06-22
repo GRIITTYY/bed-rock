@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bedrock Buyer Interface</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+  </head>
+  <body>
+    <nav class="navbar glass">
+      <div class="nav-brand"><a href="/" data-link>Bedrock</a></div>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <label for="nav-toggle" class="nav-toggle-label">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+      <div class="nav-links">
+        <!-- Auth dependent links injected via JS -->
+        <div id="auth-links" class="auth-links-container"></div>
+      </div>
+    </nav>
+    <div id="breadcrumbs" style="padding: 1rem 2rem; max-width: 1200px; margin: 0 auto; display:flex; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);"></div>
+    <main id="app-content">
+      <!-- Route views render here -->
+    </main>
+    <div id="modal-container"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

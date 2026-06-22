@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bedrock Admin</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <div id="app-wrapper">
+    <aside id="sidebar" class="hidden">
+      <div class="sidebar-header">
+        <div class="nav-brand">Bedrock</div>
+        <button class="mobile-menu-btn" id="btn-close-sidebar">✕</button>
+      </div>
+      
+      <ul class="nav-links">
+        <li>
+          <a href="#/dashboard" class="nav-item">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="#/profile" id="nav-profile" class="nav-item">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            My Profile
+          </a>
+        </li>
+        <li>
+          <a href="https://bedrock-camp.netlify.app" target="_blank" class="nav-item" style="color: var(--accent);">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            Visit Buyer Site
+          </a>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <button id="theme-toggle" class="btn-text w-full text-left" style="display: flex; align-items: center; gap: 0.75rem;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+          Toggle Theme
+        </button>
+        <button id="btn-nav-change-pwd" class="btn-text w-full text-left" style="display: flex; align-items: center; gap: 0.75rem;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          Password
+        </button>
+        <button id="btn-nav-logout" class="btn-text text-danger w-full text-left" style="display: flex; align-items: center; gap: 0.75rem;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header id="mobile-header" class="hidden">
+        <button class="mobile-menu-btn" id="btn-open-sidebar">☰</button>
+        <div class="nav-brand">Bedrock</div>
+      </header>
+
+      <div id="breadcrumbs" class="hidden"></div>
+      <main id="app-root"></main>
+    </div>
+  </div>
+
+  <footer id="footer" class="hidden">
+    <p>&copy; 2026 Bedrock Admin. All rights reserved.</p>
+  </footer>
+
+  <!-- TEMPLATES -->
+
+  <template id="tpl-login">
+    <div class="login-container">
+      <div class="glass-card login-card premium-login">
+        <div class="login-header text-center">
+          <h2 style="font-size: 2rem; margin-bottom: 0.5rem; font-weight: 700;">Bedrock Admin</h2>
+          <p class="login-subtitle">Sign in to manage your properties</p>
+        </div>
+        <form id="login-form" class="premium-form">
+          <div class="form-group">
+            <label for="login-email" style="font-weight: 600;">Email Address</label>
+            <input type="email" id="login-email" class="premium-input" required placeholder="admin@redemptioncity.com">
+          </div>
+          <div class="form-group">
+            <label for="login-password" style="font-weight: 600;">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="login-password" class="premium-input" required placeholder="••••••••">
+              <button type="button" class="btn-toggle-pwd" id="btn-toggle-login-pwd">Show</button>
+            </div>
+          </div>
+          <div id="login-error" class="error-msg hidden" style="text-align: center; margin-bottom: 1rem;">Invalid credentials</div>
+          <button type="submit" class="btn-primary btn-block btn-premium-login">Sign In</button>
+        </form>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-dashboard">
+    <div class="dashboard-container">
+      <div class="header-actions">
+        <h1>Buildings Dashboard</h1>
+        <button id="btn-add-building" class="btn-primary">+ Add New Building</button>
+      </div>
+      <div id="building-list" class="grid-list">
+        <!-- Building items will be injected here -->
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-building">
+    <div class="building-details-container">
+      <div class="building-header glass-card">
+        <img id="bldg-img" src="" alt="Building Image" class="bldg-hero-img">
+        <div class="bldg-info">
+          <h1 id="bldg-name"></h1>
+          <p id="bldg-address"></p>
+          <div id="bldg-details-container" style="display:none; margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; background: var(--bg-secondary); border: 1px solid var(--glass-border);">
+            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-primary);">Details</h3>
+            <p id="bldg-details-text" style="color: var(--text-secondary); white-space: pre-wrap; font-size: 0.95rem;"></p>
+          </div>
+          <div class="bldg-actions" style="margin-top: 1rem;">
+            <button id="btn-edit-building" class="btn-secondary">Edit Building Details</button>
+            <button id="btn-delete-building" class="btn-secondary text-danger">Delete Building</button>
+            <button id="btn-view-hall-bookings" class="btn-primary" style="display:none;">View Bookings</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="rooms-section" class="rooms-section mt-4">
+        <div class="header-actions">
+          <h2>Rooms</h2>
+          <div class="action-group">
+            <button id="btn-add-room" class="btn-primary">+ Add A Room</button>
+            <button id="btn-add-multiple-rooms" class="btn-secondary">++ Add Multiple Rooms</button>
+          </div>
+        </div>
+        <div id="room-list" class="room-list">
+          <!-- Room items injected here -->
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-profile">
+    <div class="profile-container">
+      <div class="glass-card form-card">
+        <h2>My Profile</h2>
+        <form id="profile-form">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="prof-email" disabled>
+          </div>
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="prof-name" required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" id="prof-phone">
+          </div>
+          <div class="form-group">
+            <label>Account Number</label>
+            <input type="text" id="prof-acc-num">
+          </div>
+          <div class="form-group">
+            <label>Bank Name</label>
+            <input type="text" id="prof-bank-name">
+          </div>
+          <div class="form-group">
+            <label>Account Name</label>
+            <input type="text" id="prof-acc-name">
+          </div>
+          <button type="submit" class="btn-primary w-full">Save Profile</button>
+        </form>
+      </div>
+    </div>
+  </template>
+
+  <!-- MODALS (Dialogs) -->
+
+  <dialog id="modal-change-password" class="glass-modal">
+    <form method="dialog" id="form-change-pwd">
+      <h3>Change Password</h3>
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" id="cpwd-current" required>
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" id="cpwd-new" required>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="cpwd-confirm" required>
+      </div>
+      <div id="cpwd-error" class="error-msg hidden">Incorrect Current Password</div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('modal-change-password').close()">Cancel</button>
+        <button type="submit" class="btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-building-form" class="glass-modal large-modal">
+    <form method="dialog" id="form-building">
+      <h3 id="bldg-modal-title">New Building</h3>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="bldg-f-name" required>
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" id="bldg-f-address" required>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="bldg-f-type" required>
+          <option value="Hostel">Hostel</option>
+          <option value="Hotel">Hotel</option>
+          <option value="Hall">Hall</option>
+          <option value="Apartment">Apartment</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Leasing Period</label>
+        <select id="bldg-f-leasing" required>
+          <option value="daily">Daily</option>
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+      <div class="form-row" id="group-bldg-hall-info" style="display: none; gap: 1rem;">
+        <div class="form-group" style="flex: 1;">
+          <label>Price (For Halls)</label>
+          <input type="number" step="0.01" id="bldg-f-price" placeholder="e.g. 5000">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>Max Occupants (For Halls)</label>
+          <input type="number" id="bldg-f-occupants" placeholder="e.g. 100">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Details / Description</label>
+        <textarea id="bldg-f-details" rows="4" placeholder="Enter notes or descriptions about the building..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Pictures (Upload Images)</label>
+        <div id="bldg-pic-counter" class="text-secondary" style="font-size: 0.85rem; margin-bottom: 0.5rem; display: none;">0 Pictures Added</div>
+        <div id="bldg-current-pics" class="pic-preview-container"></div>
+        <div class="form-row" style="gap: 1rem; margin-top: 0.5rem;">
+          <div style="flex:1;">
+            <label for="bldg-f-pics-gallery" class="btn-secondary w-full text-center" style="cursor:pointer; display:block; padding: 0.75rem;">
+              📁 Upload from Gallery
+            </label>
+            <input type="file" id="bldg-f-pics-gallery" multiple accept="image/*" style="display:none;">
+          </div>
+          <div style="flex:1;">
+            <label for="bldg-f-pics-camera" class="btn-secondary w-full text-center" style="cursor:pointer; display:block; padding: 0.75rem;">
+              📷 Take a Photo
+            </label>
+            <input type="file" id="bldg-f-pics-camera" accept="image/*" capture="environment" style="display:none;">
+          </div>
+        </div>
+        <small class="text-secondary" style="margin-top:0.25rem;">Note: Uploading new files will add to existing pictures.</small>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('modal-building-form').close()">Cancel</button>
+        <button type="submit" class="btn-primary" id="bldg-f-submit">Add</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-room-form" class="glass-modal large-modal">
+    <form method="dialog" id="form-room">
+      <h3 id="room-modal-title">New Room</h3>
+      
+      <div class="form-group" id="group-room-count" style="display:none;">
+        <label>Amount of Rooms to Add</label>
+        <input type="number" id="room-f-count" min="1" value="1">
+      </div>
+
+      <div class="form-group" id="group-room-name">
+        <label>Room Name</label>
+        <input type="text" id="room-f-name">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="room-f-status" required>
+          <option value="Open">Open</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Beds</label><input type="number" id="room-f-beds" min="0" required></div>
+        <div class="form-group"><label>Toilets</label><input type="number" id="room-f-toilets" min="0" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Bedrooms</label><input type="number" id="room-f-bedrooms" min="0" required></div>
+        <div class="form-group"><label>Bathrooms</label><input type="number" id="room-f-bathrooms" min="0" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Max Occupants</label><input type="number" id="room-f-occupants" min="0" required></div>
+        <div class="form-group"><label>Price</label><input type="number" id="room-f-price" min="0" step="0.01" required></div>
+      </div>
+      <div class="form-group">
+        <label>Details</label>
+        <textarea id="room-f-details" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('modal-room-form').close()">Cancel</button>
+        <button type="submit" class="btn-primary" id="room-f-submit">Add</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-bookings" class="glass-modal large-modal">
+    <div class="modal-header">
+      <h3>Room Bookings</h3>
+      <button class="btn-icon" onclick="document.getElementById('modal-bookings').close()">✕</button>
+    </div>
+    <div class="modal-body bookings-split-view">
+      <div id="bookings-list" class="bookings-list"></div>
+      <div id="calendar"></div>
+    </div>
+  </dialog>
+
+  <dialog id="modal-reviews" class="glass-modal">
+    <div class="modal-header">
+      <h3>Room Reviews</h3>
+      <button class="btn-icon" onclick="document.getElementById('modal-reviews').close()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="reviews-list">
+        <!-- Reviews go here -->
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="modal-lightbox" class="glass-modal" style="width: 90vw; max-width: 800px; padding: 1rem;">
+    <button class="btn-icon btn-lightbox-close" onclick="document.getElementById('modal-lightbox').close()" title="Close" style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">✕</button>
+    <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+        <button id="lightbox-prev" class="btn-icon" style="position: absolute; left: 0; z-index: 10; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 40px; height: 40px;">&larr;</button>
+        <img id="lightbox-img" src="" alt="Full view" style="max-height: 80vh; max-width: 100%; object-fit: contain; cursor: pointer;">
+        <button id="lightbox-next" class="btn-icon" style="position: absolute; right: 0; z-index: 10; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 40px; height: 40px;">&rarr;</button>
+    </div>
+    <div id="lightbox-counter" style="text-align: center; margin-top: 10px; color: var(--text-primary);"></div>
+  </dialog>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
