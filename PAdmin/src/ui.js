@@ -20,17 +20,23 @@ export async function renderDashboard() {
       return;
     }
 
-    // We need to fetch rooms for each building to calculate average rating
-    // But for demo simplicity, we can fetch rooms, then bookings, then reviews.
-    // Given Appwrite relations, we can manually aggregate or mock it for now.
-    
+    const [roomsRes, bookingsRes, reviewsRes] = await Promise.all([
+      databases.listDocuments(DB_ID, COLL_ROOM, [Query.limit(5000)]),
+      databases.listDocuments(DB_ID, COLL_BOOKING, [Query.limit(5000)]),
+      databases.listDocuments(DB_ID, COLL_REVIEW, [Query.limit(5000)])
+    ]);
+
+    const allRooms = roomsRes.documents;
+    const allBookings = bookingsRes.documents;
+    const allReviews = reviewsRes.documents;
+
     for (const bldg of res.documents) {
       const card = document.createElement('div');
       card.className = 'glass-card building-card';
       
       const imgUrl = (bldg.Pictures && bldg.Pictures.length > 0) ? bldg.Pictures[0] : 'https://via.placeholder.com/400x200?text=No+Image';
       
-      let avgRating = await calculateBuildingRating(bldg.$id);
+      let avgRating = calculateBuildingRatingFast(bldg.$id, allRooms, allBookings, allReviews);
 
       card.innerHTML = `
         <img src="${imgUrl}" class="bldg-card-img" alt="${bldg.Name}">
@@ -132,7 +138,6 @@ export async function renderBuildingPage(buildingId) {
     } else {
       roomsSection.style.display = 'block';
       hallBookingsBtn.style.display = 'none';
-      // Fetch and render rooms
       renderRoomsList(buildingId);
     }
 
@@ -147,16 +152,48 @@ export async function renderRoomsList(buildingId) {
   listEl.innerHTML = '<p>Loading rooms...</p>';
 
   try {
-    const res = await databases.listDocuments(DB_ID, COLL_ROOM, [
-      Query.equal('Building', buildingId)
+    const [roomsRes, bookingsRes, reviewsRes] = await Promise.all([
+      databases.listDocuments(DB_ID, COLL_ROOM, [Query.equal('Building', buildingId), Query.limit(5000)]),
+      databases.listDocuments(DB_ID, COLL_BOOKING, [Query.limit(5000)]),
+      databases.listDocuments(DB_ID, COLL_REVIEW, [Query.limit(5000)])
     ]);
     
-    // Sort by booking status (Not Booked first, then Booked). We calculate status per room.
-    const roomsWithStatus = await Promise.all(res.documents.map(async room => {
-      const { isBooked, activeBooking } = await checkRoomBookingStatus(room.$id);
-      const avgRating = await getRoomAverageRating(room.$id);
+    const allBookings = bookingsRes.documents;
+    const allReviews = reviewsRes.documents;
+    const now = new Date();
+    
+    const roomsWithStatus = roomsRes.documents.map(room => {
+      let isBooked = false;
+      let activeBooking = null;
+      const roomBookings = allBookings.filter(b => (b.Room && b.Room.$id === room.$id) || b.Room === room.$id);
+      
+      for (const b of roomBookings) {
+        const start = new Date(b.StartDate);
+        const end = new Date(b.EndDate);
+        if (now >= start && now <= end) {
+          isBooked = true;
+          activeBooking = b;
+          break;
+        }
+      }
+
+      let avgRating = "No Reviews";
+      if (roomBookings.length > 0) {
+        const bIds = roomBookings.map(b => b.$id);
+        const relevantReviews = allReviews.filter(r => {
+          const revBid = r.Booking && r.Booking.$id ? r.Booking.$id : r.Booking;
+          return bIds.includes(revBid);
+        });
+
+        if (relevantReviews.length > 0) {
+          let total = 0;
+          relevantReviews.forEach(r => total += r.Rating);
+          avgRating = (total / relevantReviews.length).toFixed(1);
+        }
+      }
+
       return { ...room, isBooked, activeBooking, avgRating };
-    }));
+    });
 
     roomsWithStatus.sort((a, b) => a.isBooked === b.isBooked ? 0 : a.isBooked ? 1 : -1);
 
@@ -223,25 +260,23 @@ export async function renderRoomsList(buildingId) {
 }
 
 // Helpers
-async function calculateBuildingRating(buildingId) {
+function calculateBuildingRatingFast(buildingId, allRooms, allBookings, allReviews) {
   try {
-    const rooms = await databases.listDocuments(DB_ID, COLL_ROOM, [Query.equal('Building', buildingId)]);
-    if (rooms.documents.length === 0) return "No Reviews";
+    const rIds = allRooms.filter(r => (r.Building && r.Building.$id === buildingId) || r.Building === buildingId).map(r => r.$id);
     
-    const roomIds = rooms.documents.map(r => r.$id);
-    const bookings = await databases.listDocuments(DB_ID, COLL_BOOKING, []); 
-    const relevantBookings = bookings.documents.filter(b => {
+    const bIds = allBookings.filter(b => {
       const rid = b.Room && b.Room.$id ? b.Room.$id : b.Room;
-      return roomIds.includes(rid);
-    });
-    if (relevantBookings.length === 0) return "No Reviews";
+      const bid = b.Building && b.Building.$id ? b.Building.$id : b.Building;
+      return rIds.includes(rid) || bid === buildingId;
+    }).map(b => b.$id);
 
-    const bookingIds = relevantBookings.map(b => b.$id);
-    const reviews = await databases.listDocuments(DB_ID, COLL_REVIEW, []);
-    const relevantReviews = reviews.documents.filter(r => {
-      const bid = r.Booking && r.Booking.$id ? r.Booking.$id : r.Booking;
-      return bookingIds.includes(bid);
+    if (bIds.length === 0) return "No Reviews";
+
+    const relevantReviews = allReviews.filter(r => {
+      const revBid = r.Booking && r.Booking.$id ? r.Booking.$id : r.Booking;
+      return bIds.includes(revBid);
     });
+
     if (relevantReviews.length === 0) return "No Reviews";
 
     let total = 0;
@@ -306,7 +341,6 @@ async function deleteBuilding(id) {
   }
 }
 
-// --- Lightbox Gallery Logic ---
 let lightboxImages = [];
 let lightboxCurrentIndex = 0;
 

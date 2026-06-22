@@ -60,21 +60,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Setup login handler (needs to be done dynamically because template content is cloned)
+  // Setup login handler
   document.addEventListener('submit', async (e) => {
     if (e.target && e.target.id === 'login-form') {
       e.preventDefault();
       const email = document.getElementById('login-email').value;
       const pwd = document.getElementById('login-password').value;
       const errEl = document.getElementById('login-error');
+      const submitBtn = e.target.querySelector('button[type="submit"]');
 
       errEl.classList.add('hidden');
       
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Signing you in...';
+        submitBtn.style.opacity = '0.7';
+        submitBtn.style.pointerEvents = 'none';
+      }
+
       const success = await login(email, pwd);
+      
       if (success) {
         window.location.hash = '#/dashboard';
       } else {
         errEl.classList.remove('hidden');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In';
+          submitBtn.style.opacity = '1';
+          submitBtn.style.pointerEvents = 'auto';
+        }
       }
     }
   });
